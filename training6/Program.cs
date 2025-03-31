@@ -1,67 +1,7 @@
-﻿using Microsoft.CSharp.RuntimeBinder;
-using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Net.WebSockets;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-/*
-while (true)
+﻿class Player
 {
-    Console.Write("Введите нынешний год: ");
-    int yearNow = Convert.ToInt32(Console.ReadLine());
-    Console.Write("Введите срок хранения вклада: ");
-    int yearsCount = Convert.ToInt32(Console.ReadLine());
-    Console.Write("Под какой процент? ");
-    int persent = Convert.ToInt32(Console.ReadLine());
-    Console.WriteLine("Выберите валюту:\nusd - 1\nrub- 2");
-    string choice = Console.ReadLine();
-    Console.Write("Ведите сумму, которую хотите внести во вклад: ");
-    float money = Convert.ToSingle(Console.ReadLine());
-    if (choice == "1")
-    {
-        for (int i = 1; i <= yearsCount; i++)
-        {
-            yearNow++;
-            money += money * persent / 100;
-            Console.WriteLine($"Год {yearNow}, сумма вклада: {money} долларов");
-            Console.ReadKey();
-        }
-        if (choice == "2")
-        {
-            for (int i = 1; i <= yearsCount; i++)
-            {
-                yearNow++;
-                money += money * persent / 100;
-
-                Console.WriteLine($"Год {yearNow}, сумма вклада: {money} рублей");
-                Console.ReadKey();
-            }
-        }
-}
-    else {
-        Console.WriteLine("Ошибка выбора валюты");
-}
-    if (choice == "1")
-    {
-        Console.WriteLine("Вы хотите перевести доллары в рубли?\nда/нет");
-        string choiceTwo = Console.ReadLine();
-        if (choiceTwo == "да")
-        {
-            Console.WriteLine("Введите курс рубля: ");
-            float rub = Convert.ToSingle(Console.ReadLine());
-            float convertToRub = money * rub;
-            Console.WriteLine($"Вы перевели {money} долларов в {convertToRub} рублей");
-        }
-    }
-    break;
-}
- */
-class Player
-{
-    // Статические переменные для хранения hp и damage
-    public static int playerHp = 110;
-    public static int playerDamage = 10;
+    public static int playerHp = 100;
+    public static int playerDamage = 15;
     public static int playerMoney = 0;
     public static int playerArmor = 0;
     public static string[] inventory = new string[4];
@@ -69,7 +9,7 @@ class Player
 
     class ShopItems
     {
-        // Статические переменные для хранения товаров магазина
+
         public static bool Sword = false;
         public static bool Axe = false;
         public static bool Katana = false;
@@ -265,7 +205,7 @@ class Player
             {
                 for (int i = 0; i < inventory.Length; i++)
                 {
-                    // Проверяем, если место в инвентаре пустое
+                    // Проверяем если место в инвентаре пустое
                     if (inventory[i] == null)
                     {
                         if (choiceItems == "1" && !inventory.Contains("Sword"))
@@ -321,7 +261,7 @@ class Player
 
                         if (choiceItemInInventory != "" && inventory.Contains(choiceItemInInventory))
                         {
-                            // Проверяем, активирован ли уже предмет
+                            // Проверяем активирован ли уже предмет
                             if (activeItem == true)
                             {
                                 ResetInventoryState();
@@ -341,13 +281,13 @@ class Player
                                     playerDamage += 15;
                                     break;
                                 case "Katana":
-                                    playerDamage += 25;
+                                    playerDamage += 30;
                                     break;
                                 case "ChainArmor":
-                                    playerHp += 20;
+                                    playerArmor += 20;
                                     break;
                                 case "SteelArmor":
-                                    playerHp += 30;
+                                    playerArmor += 30;
                                     break;
 
                                 default:
@@ -371,12 +311,13 @@ class Player
                 }
             }
 
-            // Добавьте метод для сброса состояния инвентаря
+            // Метод для сброса состояния инвентаря
             static void ResetInventoryState()
             {
                 activeItem = false; // Сброс флага активного предмета
-                playerDamage = 10; // Сброс урона, если необходимо
+                playerDamage = 15; // Сброс урона если необходимо
                 playerHp = 100;
+                playerArmor = 0;
             }
 
 
@@ -405,8 +346,9 @@ class Player
                                     Console.WriteLine("Вы выбрали Босс1");
                                     int hpBossOne = 100;
                                     int damageBossOne = 10;
-                                    playerHp = 110 + playerArmor;
+                                    playerHp = 100;
                                     Console.WriteLine($"Ваша статистика:\n{playerHp} хп\n{playerArmor} брони\n{playerDamage} урона");
+                                    playerHp = 100 + playerArmor;
 
                                     while (hpBossOne > 0 && playerHp > 0)
                                     {
@@ -417,19 +359,27 @@ class Player
                                         playerHp -= damageBossOne;
                                         hpBossOne -= playerDamage;
                                     }
-                                    if (playerHp > 0)
+                                    if (playerHp > 0 && hpBossOne <= 0)
                                     {
                                         Console.WriteLine("Вы победили босса. Ваша награда - 100 монет\n");
                                         playerMoney = playerMoney + 100;
                                         playerHp = playerHp + playerArmor;
                                         Main();
                                     }
+                                    else
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("Вы проиграли");
+                                        playerHp = 100 + playerArmor;
+                                    }
                                     break;
 
                                 case "2":
+                                    Console.Clear();
                                     Console.WriteLine("Вы выбрали Босс2");
                                     int hpBossTwo = 150;
                                     int damageBossTwo = 20;
+                                    Console.WriteLine($"Ваша статистика:\n{playerHp} хп\n{playerArmor} брони\n{playerDamage} урона");
                                     playerHp = 100 + playerArmor;
 
                                     while (hpBossTwo > 0 && playerHp > 0)
@@ -441,18 +391,26 @@ class Player
                                         playerHp = playerHp - damageBossTwo;
                                         hpBossTwo = hpBossTwo - playerDamage;
                                     }
-                                    if (playerHp > 0)
+                                    if (playerHp > 0 && hpBossTwo <= 0)
                                     {
                                         Console.WriteLine("Вы победили Босс2. Ваша награда - 200 монет");
                                         playerHp = playerHp + playerArmor;
                                         playerMoney = playerMoney + 200;
                                     }
+                                    else
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("Вы проиграли");
+                                        playerHp = 100 + playerArmor;
+                                    }
                                     break;
 
                                 case "3":
+                                    Console.Clear();
                                     Console.WriteLine("Вы выбрали Босс3");
                                     int hpBossThree = 250;
                                     int damageBossThree = 40;
+                                    Console.WriteLine($"Ваша статистика:\n{playerHp} хп\n{playerArmor} брони\n{playerDamage} урона");
                                     playerHp = 100 + playerArmor;
 
                                     while (hpBossThree > 0 && playerHp > 0)
@@ -464,28 +422,30 @@ class Player
                                         playerHp = playerHp - damageBossThree;
                                         hpBossThree = hpBossThree - playerDamage;
                                     }
+                                    if (playerHp > 0 && hpBossThree <= 0)
+
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("Вы победили Босс3. Ваша награда - 250 монет");
+                                        playerHp = 100 + playerArmor;
+                                        playerMoney = playerMoney + 200;
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("Вы проиграли");
+                                        playerHp = 100 + playerArmor;
+                                    }
                                     break;
                                 default:
                                     Console.WriteLine("Ошибка ввода");
                                     break;
                             }
-                            if (playerHp > 0)
-
-                            {
-                                Console.Clear();
-                                Console.WriteLine("Вы победили Босс3. Ваша награда - 250 монет");
-                                playerHp = 100 + playerArmor;
-                                playerMoney = playerMoney + 200;
-                                continue;
-                            }
-                            else
-                            {
-                                Console.Clear();
-                                Console.WriteLine("Вы проиграли");
-                                playerHp = 100 + playerArmor;
-                            }
                             break;
-                        } else if (choiceBoss == "") {
+                        }
+                        else if (choiceBoss == "")
+                        {
                             Console.Clear();
                             Console.WriteLine("Ошибка ввода");
                         }
